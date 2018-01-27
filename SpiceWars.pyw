@@ -1,6 +1,6 @@
 # -*- coding: cp1252 -*-
 
-import sqlite3, tkinter, random
+import pymysql, tkinter, random
 from tkinter import messagebox
 
 Geld = 1000
@@ -10,6 +10,7 @@ aktKosten = [100, 30, 50, 20, 10]
 KostenMin = [50, 5, 20, 100, 60]
 KostenMax = [150, 35, 170, 450, 300]
 EigeneLadung = [0, 0, 0, 0, 0]
+Error = ''
 
 
 def DisplayAktualisieren():
@@ -18,6 +19,11 @@ def DisplayAktualisieren():
     global EigeneLadung
     global Geld
     global Laderaum
+    global Error
+
+    LabelError.configure(text=Error)
+    Error = ''
+
     Liste.delete("0", "end")
     Liste.insert("end", Gewuerze[0] + "  " + str(aktKosten[0]))
     Liste.insert("end", Gewuerze[1] + "  " + str(aktKosten[1]))
@@ -54,14 +60,24 @@ def NeuesSpiel():
     Laderaum = 100
     DisplayAktualisieren()
 
-
+# ERROR: Keine Auswahl von Gewürzen = Error
+# FIXME: Besseres Errorhandling
 def kaufen():
     global Geld
     global aktKosten
     global EigeneLadung
     global Laderaum
-    Anzahl = int(EingabeMenge.get())
-    Nummer = int(Liste.curselection()[0])
+    global Error
+
+    try:
+        Anzahl = int(EingabeMenge.get())
+    except:
+        Error = 'Keine Eingabemenge'
+
+    try:
+        Nummer = int(Liste.curselection()[0])
+    except:
+        Error = 'Kein Gewürz'
     if (Laderaum >= Anzahl) and (Geld >= aktKosten[Nummer] * Anzahl):
         Laderaum = Laderaum - Anzahl
         Geld = Geld - int(aktKosten[Nummer]) * Anzahl
@@ -105,20 +121,21 @@ Fenster = tkinter.Tk()
 Fenster.title("SpiceWars")
 
 # -------------------------
-
 Liste = tkinter.Listbox(width=30, height=10)
 Liste.grid(padx=5, pady=5, row=1, column=1, columnspan=1, rowspan=3)
 
 LabelMenge = tkinter.Label(Fenster, text='Menge: ')
-
 LabelMenge.grid(padx=5, pady=5, row=1, column=2)
 EingabeMenge = tkinter.Entry(Fenster, width=4)
 EingabeMenge.grid(padx=5, pady=5, row=1, column=3)
 
+LabelError = tkinter.Label(Fenster, text='ERROR')
+LabelError.grid(padx=5, pady=5, row=2, column=2)
+
 ButtonKaufen = tkinter.Button(Fenster, text=' kaufen  >>> ', command=kaufen)
-ButtonKaufen.grid(padx=5, pady=5, row=2, column=2, columnspan=2)
+ButtonKaufen.grid(padx=5, pady=5, row=3, column=2, columnspan=2)
 ButtonVerkaufen = tkinter.Button(Fenster, text=' <<< verkaufen ', command=verkaufen)
-ButtonVerkaufen.grid(padx=5, pady=5, row=3, column=2, columnspan=2)
+ButtonVerkaufen.grid(padx=5, pady=5, row=4, column=2, columnspan=2)
 
 ListeLaderaum = tkinter.Listbox(width=30, height=10)
 ListeLaderaum.grid(padx=5, pady=5, row=1, column=5, columnspan=2, rowspan=3)

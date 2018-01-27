@@ -1,0 +1,14 @@
+{
+  "mysql": {
+    "host": "localhost",
+    "user": "root",
+    "password": "password",
+    "database": "database"
+  },
+  "general": {
+    "harbours": {
+      "Alexandria": {
+      }
+    }
+  }
+}
