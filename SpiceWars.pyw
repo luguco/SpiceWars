@@ -28,7 +28,6 @@ for spice, values in config['spices'].items():
 for harbour in config['harbours']:
     Haefen.append(harbour)
 
-
 def DisplayAktualisieren():
     global Gewuerze
     global aktKosten
@@ -73,54 +72,66 @@ def NeuesSpiel():
 # FIXME: Besseres Errorhandling
 def kaufen():
     global Geld
+    global Gewuerze
     global aktKosten
     global EigeneLadung
     global Laderaum
     global Error
 
+    anzahl = 0
+    nummer = 0
     try:
-        Anzahl = int(EingabeMenge.get())
+        anzahl = int(EingabeMenge.get())
     except:
         Error = 'Keine Eingabemenge'
 
     try:
-        Nummer = int(Liste.curselection()[0])
+        nummer = int(Liste.curselection()[0])
     except:
         Error = 'Kein Gewürz'
-    if (Laderaum >= Anzahl) and (Geld >= aktKosten[Nummer] * Anzahl):
-        Laderaum = Laderaum - Anzahl
-        Geld = Geld - int(aktKosten[Nummer]) * Anzahl
-        EigeneLadung[Nummer] = EigeneLadung[Nummer] + Anzahl
+
+    if (Laderaum >= anzahl) and (Geld >= aktKosten[Gewuerze[nummer]] * anzahl):
+        Laderaum = Laderaum - anzahl
+        Geld = Geld - int(aktKosten[Gewuerze[nummer]]) * anzahl
+        EigeneLadung[Gewuerze[nummer]] = EigeneLadung[Gewuerze[nummer]] + anzahl
+    EingabeMenge.delete(0, 'end')
     DisplayAktualisieren()
 
-
+# ERROR Kein Errorhandling
 def verkaufen():
     global Geld
+    global Gewuerze
     global aktKosten
     global EigeneLadung
     global ListeLaderaum
     global Laderaum
-    Anzahl = int(EingabeMenge.get())
-    Nummer = int(ListeLaderaum.curselection()[0])
-    if (Anzahl <= EigeneLadung[Nummer]):
-        Laderaum = Laderaum + Anzahl
-        Geld = Geld + int(aktKosten[Nummer]) * Anzahl
-        EigeneLadung[Nummer] = EigeneLadung[Nummer] - Anzahl
+    anzahl = 0
+    nummer = 0
+    anzahl = int(EingabeMenge.get())
+    nummer = int(ListeLaderaum.curselection()[0])
+
+    if anzahl <= EigeneLadung[Gewuerze[nummer]]:
+        Laderaum = Laderaum + anzahl
+        Geld = Geld + int(aktKosten[Gewuerze[nummer]]) * anzahl
+        EigeneLadung[Gewuerze[nummer]] = EigeneLadung[Gewuerze[nummer]] - anzahl
+    EingabeMenge.delete(0, 'end')
     DisplayAktualisieren()
 
-
+# ERROR Kein Errorhandling
 def Weitersegeln():
     global ListeStaedte
+    global Gewuerze
     global aktKosten
     global KostenMin
     global KostenMax
-    Nummer = int(ListeStaedte.curselection()[0])
-    Stadt = ListeStaedte.get(Nummer)
+    nummer = int(ListeStaedte.curselection()[0])
+    stadt = ListeStaedte.get(nummer)
     messagebox.showinfo("- R E I S E I N F O -",
-                        "Ihre Reise geht nach " + Stadt + ".\n Der Wind steht gut.\n Sie brauchen 2 Wochen")
-    for i in range(5):
+                        "Ihre Reise geht nach " + stadt + ".\n Der Wind steht gut.\n Sie brauchen 2 Wochen")
+
+    for spice in Gewuerze:
         # KostenDifferenz = KostenMax[i]-KostenMin[i]
-        aktKosten[i] = random.randint(KostenMin[i], KostenMax[i])
+        aktKosten[spice] = random.randint(KostenMin[spice], KostenMax[spice])
     DisplayAktualisieren()
 
 
@@ -154,10 +165,10 @@ ListeStaedte = tkinter.Listbox(width=30, height=6)
 ListeStaedte.grid(padx=5, pady=20, row=4, column=1, columnspan=1, rowspan=3)
 
 ButtonBewegen = tkinter.Button(Fenster, text=' weitersegeln ... ', command=Weitersegeln)
-ButtonBewegen.grid(row=4, column=2, padx=5, pady=25, columnspan=2)
+ButtonBewegen.grid(row=5, column=2, padx=5, pady=25, columnspan=2)
 
 ButtonNeustart = tkinter.Button(Fenster, text=' neues Spiel ', command=NeuesSpiel)
-ButtonNeustart.grid(row=4, column=5, padx=5, pady=25)
+ButtonNeustart.grid(row=5, column=5, padx=5, pady=25)
 
 NeuesSpiel()
 # ---------------------
