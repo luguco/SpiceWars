@@ -8,11 +8,17 @@
   "general": {
     "__comment": "Cost Multiplayer for situations like bad harvest -> higher price",
     "cost_multiplier": 0.5,
+
     "__comment1": "Gamelength in weeks",
     "gamelength": 52,
+
     "startmoney": 1000,
     "holdspace": 100,
-    "startdebts": 10000
+    "startdebts": 1000,
+    "maxdebts": 10000,
+
+    "__comment2": "Bank interest in percent",
+    "interest": 10
   },
   "spices": {
     "Pfeffer": {
