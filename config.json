@@ -6,9 +6,54 @@
     "database": "database"
   },
   "general": {
-    "harbours": {
-      "Alexandria": {
-      }
+    "__comment": "Cost Multiplayer for situations like bad harvest -> higher price",
+    "cost_multiplier": 0.5,
+    "__comment1": "Gamelength in weeks",
+    "gamelength": 52,
+    "startmoney": 1000,
+    "holdspace": 100,
+    "startdebts": 10000
+  },
+  "spices": {
+    "Pfeffer": {
+      "pricemin": 50,
+      "pricemax": 150,
+      "startprice": 100,
+      "startvolume": 0
+    },
+    "Muskat": {
+      "pricemin": 5,
+      "pricemax": 35,
+      "startprice": 30,
+      "startvolume": 0
+    },
+    "Nelken": {
+      "pricemin": 20,
+      "pricemax": 170,
+      "startprice": 50,
+      "startvolume": 0
+    },
+    "Vanille": {
+      "pricemin": 100,
+      "pricemax": 450,
+      "startprice": 20,
+      "startvolume": 0
+    },
+    "Zimt": {
+      "pricemin": 60,
+      "pricemax": 300,
+      "startprice": 10,
+      "startvolume": 0
+    }
+  },
+  "harbours": {
+    "Alexandria": {
+    },
+    "Venedig": {
+    },
+    "Rom": {
+    },
+    "Barcelona": {
     }
   }
 }

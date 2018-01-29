@@ -1,16 +1,32 @@
 # -*- coding: cp1252 -*-
 
-import pymysql, tkinter, random
+import pymysql, tkinter, random, json
 from tkinter import messagebox
 
-Geld = 1000
-Laderaum = 100
-Gewuerze = ["Pfeffer", "Muskat", "Nelken", "Vanille", "Zimt"]
-aktKosten = [100, 30, 50, 20, 10]
-KostenMin = [50, 5, 20, 100, 60]
-KostenMax = [150, 35, 170, 450, 300]
-EigeneLadung = [0, 0, 0, 0, 0]
+config_file = open("config.json", "r")
+config = json.load(config_file)
+
+Geld = config['general']['startmoney']
+Laderaum = config['general']['holdspace']
+
+Gewuerze = []
+aktKosten = {}
+KostenMin = {}
+KostenMax = {}
+EigeneLadung = {}
+Haefen = []
 Error = ''
+
+# TODO: Vairableninziierung in eigene Funktion
+for spice, values in config['spices'].items():
+    Gewuerze.append(spice)
+    KostenMin[spice] = values['pricemin']
+    KostenMax[spice] = values['pricemax']
+    EigeneLadung[spice] = values['startvolume']
+    aktKosten[spice] = values['startprice']
+
+for harbour in config['harbours']:
+    Haefen.append(harbour)
 
 
 def DisplayAktualisieren():
@@ -19,34 +35,27 @@ def DisplayAktualisieren():
     global EigeneLadung
     global Geld
     global Laderaum
+    global Haefen
     global Error
 
     LabelError.configure(text=Error)
     Error = ''
 
     Liste.delete("0", "end")
-    Liste.insert("end", Gewuerze[0] + "  " + str(aktKosten[0]))
-    Liste.insert("end", Gewuerze[1] + "  " + str(aktKosten[1]))
-    Liste.insert("end", Gewuerze[2] + "  " + str(aktKosten[2]))
-    Liste.insert("end", Gewuerze[3] + "  " + str(aktKosten[3]))
-    Liste.insert("end", Gewuerze[4] + "  " + str(aktKosten[4]))
+    for item in Gewuerze:
+        Liste.insert("end", item + " " + str(aktKosten[item]))
 
     ListeLaderaum.delete("0", "end")
-    ListeLaderaum.insert("end", str(EigeneLadung[0]) + " Einheiten: " + str(Gewuerze[0]))
-    ListeLaderaum.insert("end", str(EigeneLadung[1]) + " Einheiten: " + str(Gewuerze[1]))
-    ListeLaderaum.insert("end", str(EigeneLadung[2]) + " Einheiten: " + str(Gewuerze[2]))
-    ListeLaderaum.insert("end", str(EigeneLadung[3]) + " Einheiten: " + str(Gewuerze[3]))
-    ListeLaderaum.insert("end", str(EigeneLadung[4]) + " Einheiten: " + str(Gewuerze[4]))
+    for item in Gewuerze:
+        ListeLaderaum.insert("end", str(EigeneLadung[item]) + " Einheiten: " + item)
+
     ListeLaderaum.insert("end", "-------")
     ListeLaderaum.insert("end", "Goldtaler: " + str(Geld))
     ListeLaderaum.insert("end", "Platz im Laderaum: " + str(Laderaum))
 
     ListeStaedte.delete("0", "end")
-    ListeStaedte.insert("end", "Alexandria")
-    ListeStaedte.insert("end", "Tunesien")
-    ListeStaedte.insert("end", "Venedig")
-    ListeStaedte.insert("end", "Rom")
-    ListeStaedte.insert("end", "Barcelona")
+    for item in Haefen:
+        ListeStaedte.insert("end", item)
 
 
 def NeuesSpiel():
@@ -54,10 +63,10 @@ def NeuesSpiel():
     global EigeneLadung
     global Geld
     global Laderaum
-    aktKosten = [100, 30, 50, 20, 10]
-    EigeneLadung = [0, 0, 0, 0, 0]
-    Geld = 1000
-    Laderaum = 100
+    # aktKosten = [100, 30, 50, 20, 10]
+    # EigeneLadung = [0, 0, 0, 0, 0]
+    # Geld = 1000
+    # Laderaum = 100
     DisplayAktualisieren()
 
 # ERROR: Keine Auswahl von Gewürzen = Error
