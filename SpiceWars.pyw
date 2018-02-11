@@ -1,154 +1,218 @@
 # -*- coding: cp1252 -*-
 
-import pymysql, tkinter, random, json
+import tkinter, random, json
 from tkinter import messagebox
 
-config_file = open("config.json", "r")
-config = json.load(config_file)
 
-Geld = 0
-Schulden = 0
-Laderaum = 0
-MaxSchulden = 0
-Zinsen = 0
+class SpiceWars(object):
+    def __init__(self):
+        config_file = open("config.json", "r")
+        config = json.load(config_file)
 
-Gewuerze = []
-aktKosten = {}
-KostenMin = {}
-KostenMax = {}
-EigeneLadung = {}
-Haefen = []
-Error = ''
+        self._money = config['general']['startmoney']
+        self._debts = config['general']['startdebts']
+        self._holdspace = config['general']['holdspace']
+        self._maxdebts = config['general']['maxdebts']
+        self._interest = config['general']['interest']
+        self._spices = []
+        self._currentcost = {}
+        self._mincost = {}
+        self._maxcost = {}
+        self._owncharge = {}
+        self._harbours = []
+        self._error = ""
+
+        for spice, values in config['spices'].items():
+            self._spices.append(spice)
+            self._mincost[spice] = values['pricemin']
+            self._maxcost[spice] = values['pricemax']
+            self._owncharge[spice] = values['startvolume']
+            self._currentcost[spice] = values['startprice']
+
+        for harbour in config['harbours']:
+            self._harbours.append(harbour)
+
+    @property
+    def money(self):
+        return self._money
+
+    @money.setter
+    def money(self, value):
+        self._money = value
+
+    @property
+    def debts(self):
+        return self._debts
+
+    @debts.setter
+    def debts(self, value):
+        self._debts = value
+
+    @property
+    def holdspace(self):
+        return self._holdspace
+
+    @holdspace.setter
+    def holdspace(self, value):
+        self._holdspace = value
+
+    @property
+    def maxdebts(self):
+        return self._maxdebts
+
+    # FIXME: Unused
+    @maxdebts.setter
+    def maxdebts(self, value):
+        self._maxdebts = value
+
+    @property
+    def interest(self):
+        return self._interest
+
+    # FIXME: Unused
+    @interest.setter
+    def interest(self, value):
+        self._interest = value
+
+    @property
+    def spices(self):
+        return self._spices
+
+    @spices.setter
+    def spices(self, value):
+        self._spices = value
+
+    @property
+    def currentcost(self):
+        return self._currentcost
+
+    @currentcost.setter
+    def currentcost(self, value):
+        self._currentcost = value
+
+    @property
+    def mincost(self):
+        return self._mincost
+
+    @mincost.setter
+    def mincost(self, value):
+        self._mincost = value
+
+    @property
+    def maxcost(self):
+        return self._maxcost
+
+    @maxcost.setter
+    def maxcost(self, value):
+        self._maxcost = value
+
+    @property
+    def owncharge(self):
+        return self._owncharge
+
+    @owncharge.setter
+    def owncharge(self, value):
+        self._owncharge = value
+
+    @property
+    def harbours(self):
+        return self._harbours
+
+    # FIXME: Unused
+    @harbours.setter
+    def harbours(self, value):
+        self._harbours = value
+
+    @property
+    def error(self):
+        return self._error
+
+    @error.setter
+    def error(self, value):
+        self._error = value
 
 
-# TODO: Vairableninziierung in eigene Funktion
-def variableinitiation():
-    global Geld
-    global Laderaum
-    global Schulden
-    global MaxSchulden
-    global Zinsen
+variables = SpiceWars()
 
-    Geld = config['general']['startmoney']
-    Schulden = config['general']['startdebts']
-    MaxSchulden = config['general']['maxdebts']
-    Laderaum = config['general']['holdspace']
-    Zinsen = config['general']['interest']
-
-    for spice, values in config['spices'].items():
-        Gewuerze.append(spice)
-        KostenMin[spice] = values['pricemin']
-        KostenMax[spice] = values['pricemax']
-        EigeneLadung[spice] = values['startvolume']
-        aktKosten[spice] = values['startprice']
-
-    for harbour in config['harbours']:
-        Haefen.append(harbour)
+# print(variables.money)
+# variables.money = 100
+# print(variables.money)
 
 
 def DisplayAktualisieren():
-    global Gewuerze
-    global aktKosten
-    global EigeneLadung
-    global Geld
-    global Schulden
-    global Laderaum
-    global Haefen
-    global Error
-
-    LabelError.configure(text=Error)
-    Error = ''
+    LabelError.configure(text=variables.error)
+    variables.error = ""
 
     Liste.delete("0", "end")
-    for item in Gewuerze:
-        Liste.insert("end", item + " " + str(aktKosten[item]))
-
     ListeLaderaum.delete("0", "end")
-    for item in Gewuerze:
-        ListeLaderaum.insert("end", str(EigeneLadung[item]) + " Einheiten: " + item)
+    for item in variables.spices:
+        Liste.insert("end", item + " " + str(variables.currentcost[item]))
+        ListeLaderaum.insert("end", str(variables.owncharge[item]) + " Einheiten: " + item)
 
     ListeLaderaum.insert("end", "-------")
-    ListeLaderaum.insert("end", "Goldtaler: " + str(Geld))
-    ListeLaderaum.insert("end", "Schulden: " + str(Schulden))
-    ListeLaderaum.insert("end", "Platz im Laderaum: " + str(Laderaum))
+    ListeLaderaum.insert("end", "Goldtaler: " + str(variables.money))
+    ListeLaderaum.insert("end", "Schulden: " + str(variables.debts))
+    ListeLaderaum.insert("end", "Platz im Laderaum: " + str(variables.holdspace))
 
     ListeStaedte.delete("0", "end")
-    for item in Haefen:
+    for item in variables.harbours:
         ListeStaedte.insert("end", item)
 
 
 def NeuesSpiel():
-    global aktKosten
-    global EigeneLadung
-    global Geld
-    global Laderaum
-    variableinitiation()
+    variables.__init__()
     DisplayAktualisieren()
 
 
 # ERROR: Keine Auswahl von Gewürzen = Error
 # FIXME: Besseres Errorhandling
 def kaufen():
-    global Geld
-    global Gewuerze
-    global aktKosten
-    global EigeneLadung
-    global Laderaum
-    global Error
 
     anzahl = 0
     nummer = 0
     try:
         anzahl = int(EingabeMenge.get())
     except:
-        Error = 'Keine Eingabemenge'
+        variables.error = 'Keine Eingabemenge'
 
     try:
         nummer = int(Liste.curselection()[0])
     except:
-        Error = 'Kein Gewürz'
+        variables.error = 'Kein Gewürz'
 
-    if (Laderaum >= anzahl) and (Geld >= aktKosten[Gewuerze[nummer]] * anzahl):
-        Laderaum = Laderaum - anzahl
-        Geld = Geld - int(aktKosten[Gewuerze[nummer]]) * anzahl
-        EigeneLadung[Gewuerze[nummer]] = EigeneLadung[Gewuerze[nummer]] + anzahl
+    if (variables.holdspace >= anzahl) and (variables.money >= variables.currentcost[variables.spices[nummer]] * anzahl):
+        variables.holdspace = variables.holdspace - anzahl
+        variables.money = variables.money - int(variables.currentcost[variables.spices[nummer]]) * anzahl
+        variables.owncharge[variables.spices[nummer]] = variables.owncharge[variables.spices[nummer]] + anzahl
     EingabeMenge.delete(0, 'end')
     DisplayAktualisieren()
 
 
 # ERROR Kein Errorhandling
 def verkaufen():
-    global Geld
-    global Gewuerze
-    global aktKosten
-    global EigeneLadung
-    global ListeLaderaum
-    global Laderaum
     anzahl = 0
     nummer = 0
     anzahl = int(EingabeMenge.get())
     nummer = int(ListeLaderaum.curselection()[0])
 
-    if anzahl <= EigeneLadung[Gewuerze[nummer]]:
-        Laderaum = Laderaum + anzahl
-        Geld = Geld + int(aktKosten[Gewuerze[nummer]]) * anzahl
-        EigeneLadung[Gewuerze[nummer]] = EigeneLadung[Gewuerze[nummer]] - anzahl
+    if anzahl <= variables.owncharge[variables.spices[nummer]]:
+        variables.holdspace = variables.holdspace + anzahl
+        variables.money = variables.money + int(variables.currentcost[variables.spices[nummer]]) * anzahl
+        variables.owncharge[variables.spices[nummer]] = variables.owncharge[variables.spices[nummer]] - anzahl
     EingabeMenge.delete(0, 'end')
     DisplayAktualisieren()
+
 
 # ERROR Kein Errorhandling
 # TODO Zufaellige Kreditverweigerung
 
 def leihen():
-    global Geld
-    global Schulden
-    global MaxSchulden
 
     menge = int(EingabeBetrag.get())
-    if Schulden < MaxSchulden:
-        if menge + Schulden <= MaxSchulden:
-            Geld = Geld + menge
-            Schulden = Schulden + menge
+    if variables.debts < variables.maxdebts:
+        if menge + variables.debts <= variables.maxdebts:
+            variables.money += menge
+            variables.debts += menge
             EingabeBetrag.delete(0, 'end')
         else:
             messagebox.showinfo("Fehler", "Leihsumme zu gross")
@@ -157,18 +221,18 @@ def leihen():
     DisplayAktualisieren()
 
 
+# ERROR: Kein Errorhandling
 def zurueckzahlen():
-    global Geld
-    global Schulden
-    global Zinsen
 
     menge = int(EingabeBetrag.get())
-    zuzahlen = menge + menge * (Zinsen / 100)
-    zuzahlen = int(zuzahlen)
+    zuzahlen = menge + menge * (variables.interest / 100)
+    if zuzahlen > 0:
+        zuzahlen += 1
+    zuzahlen = int(round(zuzahlen))
 
-    if Geld - zuzahlen >= 0:
-        Geld = Geld - zuzahlen
-        Schulden = Schulden - menge
+    if variables.money - zuzahlen >= 0:
+        variables.money -= zuzahlen
+        variables.debts -= menge
         EingabeBetrag.delete(0, 'end')
         DisplayAktualisieren()
     else:
@@ -177,19 +241,13 @@ def zurueckzahlen():
 
 # ERROR Kein Errorhandling
 def Weitersegeln():
-    global ListeStaedte
-    global Gewuerze
-    global aktKosten
-    global KostenMin
-    global KostenMax
     nummer = int(ListeStaedte.curselection()[0])
     stadt = ListeStaedte.get(nummer)
     messagebox.showinfo("- R E I S E I N F O -",
                         "Ihre Reise geht nach " + stadt + ".\n Der Wind steht gut.\n Sie brauchen 2 Wochen")
 
-    for spice in Gewuerze:
-        # KostenDifferenz = KostenMax[i]-KostenMin[i]
-        aktKosten[spice] = random.randint(KostenMin[spice], KostenMax[spice])
+    for spice in variables.spices:
+        variables.currentcost[spice] = random.randint(variables.mincost[spice], variables.maxcost[spice])
     DisplayAktualisieren()
 
 
