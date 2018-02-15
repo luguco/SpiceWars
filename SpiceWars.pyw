@@ -43,7 +43,8 @@ class SpiceWars(object):
 
         self._holdspace = self._shiplevels["1"]["holdspace"]
 
-        self._upgradeprice = random.randint(self._shiplevels[str(self._shiplevel + 1)]["pricemin"], self._shiplevels[str(self._shiplevel + 1)]["pricemax"])
+        self._upgradeprice = random.randint(self._shiplevels[str(self._shiplevel + 1)]["pricemin"],
+                                            self._shiplevels[str(self._shiplevel + 1)]["pricemax"])
 
     # print(self._shiplevels[str(1)]["pricemin"])
 
@@ -200,16 +201,16 @@ def DisplayAktualisieren():
     Schiffsstatus.insert("end", "Platz im Laderaum: " + str(variables.holdspace))
     Schiffsstatus.insert("end", "--------------")
     Schiffsstatus.insert("end", "Aktuelles Level: " + str(variables.shiplevel))
-    Schiffsstatus.insert("end", "Aktuelle Helferanzahl: " + str(variables.shiplevels[str(variables.shiplevel)]["shiphelper"]))
+    Schiffsstatus.insert("end",
+                         "Aktuelle Helferanzahl: " + str(variables.shiplevels[str(variables.shiplevel)]["shiphelper"]))
     Schiffsstatus.insert("end", "--------------")
     if variables.shiplevel + 1 <= variables.shiplevelcount:
         Schiffsstatus.insert("end", "Nächstes Level: " + str(variables.shiplevel + 1))
-        Schiffsstatus.insert("end", "Upgrade Preis: " +str(variables.upgradeprice))
+        Schiffsstatus.insert("end", "Upgrade Preis: " + str(variables.upgradeprice))
 
     ListeStaedte.delete("0", "end")
     for item in variables.harbours:
         ListeStaedte.insert("end", item)
-
 
 
 def NeuesSpiel():
@@ -339,62 +340,79 @@ def Downgrade():
 Fenster = tkinter.Tk()
 Fenster.title("SpiceWars")
 
-# -------------------------
-Liste = tkinter.Listbox(width=30, height=10)
-Liste.grid(padx=5, pady=5, row=1, column=1, columnspan=1, rowspan=3)
+# Gewürze-------------------------
+ListeBeschriftung = tkinter.Label(width=20, height=1, text='<<<Gewuerze>>>')
+ListeBeschriftung.grid(padx=5, pady=1, row=1, column=1, columnspan=1, rowspan=1)
 
+Liste = tkinter.Listbox(width=30, height=10)
+Liste.grid(padx=5, pady=5, row=2, column=1, columnspan=1, rowspan=3)
+# Handel---------------------------
 LabelMenge = tkinter.Label(Fenster, text='Menge: ')
-LabelMenge.grid(padx=5, pady=5, row=1, column=2)
+LabelMenge.grid(padx=5, pady=5, row=2, column=2)
+
 EingabeMenge = tkinter.Entry(Fenster, width=4)
-EingabeMenge.grid(padx=5, pady=5, row=1, column=3)
+EingabeMenge.grid(padx=5, pady=5, row=2, column=3)
 
 LabelError = tkinter.Label(Fenster, text='ERROR')
-LabelError.grid(padx=5, pady=5, row=2, column=2)
+LabelError.grid(padx=5, pady=5, row=3, column=2)
 
 ButtonKaufen = tkinter.Button(Fenster, text=' kaufen  >>> ', command=kaufen)
-ButtonKaufen.grid(padx=5, pady=5, row=3, column=2, columnspan=2, sticky=tkinter.W + tkinter.E)
+ButtonKaufen.grid(padx=5, pady=5, row=4, column=2, columnspan=2, sticky=tkinter.W + tkinter.E)
+
 ButtonVerkaufen = tkinter.Button(Fenster, text=' <<< verkaufen ', command=verkaufen)
-ButtonVerkaufen.grid(padx=5, pady=5, row=4, column=2, columnspan=2, sticky=tkinter.W + tkinter.E)
-
+ButtonVerkaufen.grid(padx=5, pady=5, row=5, column=2, columnspan=2, sticky=tkinter.W + tkinter.E)
+# Bank-----------------------------
 LabelBetrag = tkinter.Label(Fenster, text='Betrag: ')
-LabelBetrag.grid(padx=35, pady=5, row=4, column=5, sticky=tkinter.W)
-EingabeBetrag = tkinter.Entry(Fenster, width=4)
-EingabeBetrag.grid(padx=5, pady=5, row=4, column=5)
+LabelBetrag.grid(padx=35, pady=5, row=5, column=5, sticky=tkinter.W)
 
-ListeLaderaum = tkinter.Listbox(width=30, height=10)
-ListeLaderaum.grid(padx=5, pady=5, row=1, column=5, columnspan=2, rowspan=3)
+EingabeBetrag = tkinter.Entry(Fenster, width=4)
+EingabeBetrag.grid(padx=5, pady=5, row=5, column=5)
+
+BeschriftungLaderaum = tkinter.Label(width=20, height=1, text='<<<Laderaum>>>')
+BeschriftungLaderaum.grid(padx=5, pady=1, row=1, column=5, columnspan=2, rowspan=1)
 
 ButtonLeihen = tkinter.Button(Fenster, text=' Leihen <<< ', command=leihen)
-ButtonLeihen.grid(row=5, padx=5, pady=25, column=2, columnspan=2, sticky=tkinter.W + tkinter.E)
+ButtonLeihen.grid(row=6, padx=5, pady=25, column=2, columnspan=2, sticky=tkinter.W + tkinter.E)
 
 ButtonZahlen = tkinter.Button(Fenster, text=' >>> Zurückzahlen ', command=zurueckzahlen)
-ButtonZahlen.grid(row=5, padx=35, pady=25, column=5, sticky=tkinter.W + tkinter.E)
-# -----------------------
+ButtonZahlen.grid(row=6, padx=35, pady=25, column=5, sticky=tkinter.W + tkinter.E)
+# Laderaum--------------------------
+ListeLaderaum = tkinter.Listbox(width=30, height=10)
+ListeLaderaum.grid(padx=5, pady=5, row=2, column=5, columnspan=2, rowspan=3)
+
+# Segeln ---------------------------
+BeschriftungStaedte = tkinter.Label(width=20, height=1, text='<<<Reiseziele>>')
+BeschriftungStaedte.grid(padx=5, pady=1, row=5, column=1, columnspan=1, rowspan=1)
+
 ListeStaedte = tkinter.Listbox(width=30, height=6)
-ListeStaedte.grid(padx=5, pady=20, row=4, column=1, columnspan=1, rowspan=3)
+ListeStaedte.grid(padx=5, pady=1, row=5, column=1, columnspan=1, rowspan=3)
 
 ButtonBewegen = tkinter.Button(Fenster, text=' weitersegeln ... ', command=Weitersegeln)
-ButtonBewegen.grid(row=6, column=2, padx=5, pady=25, columnspan=2, sticky=tkinter.W + tkinter.E)
-
+ButtonBewegen.grid(row=7, column=2, padx=5, pady=25, columnspan=2, sticky=tkinter.W + tkinter.E)
+# Neues Spiel-----------------------
 ButtonNeustart = tkinter.Button(Fenster, text=' neues Spiel ', command=NeuesSpiel)
-ButtonNeustart.grid(row=6, column=5, padx=35, pady=25, sticky=tkinter.W + tkinter.E)
+ButtonNeustart.grid(row=7, column=5, padx=35, pady=25, sticky=tkinter.W + tkinter.E)
 
-# Upgrades --------------
+# Upgrades ------------------------
+BeschriftungUpgrades = tkinter.Label(width=20, height=1, text='<<<Verbesserungen>>>')
+BeschriftungUpgrades.grid(padx=5, pady=1, row=3, column=7, columnspan=2, rowspan=1)
 
 ListeUpgrades = tkinter.Listbox(width=30, height=10)
-ListeUpgrades.grid(padx=5, pady=5, row=3, column=7, columnspan=2, rowspan=3)
+ListeUpgrades.grid(padx=5, pady=5, row=4, column=7, columnspan=2, rowspan=3)
 
 UpgradeButton = tkinter.Button(Fenster, text='Verbessern', command=Upgrade)
-UpgradeButton.grid(padx=5, pady=5, row=6, column=7, columnspan=1, rowspan=1)
+UpgradeButton.grid(padx=5, pady=5, row=7, column=7, columnspan=1, rowspan=1)
 
 DowngradeButton = tkinter.Button(Fenster, text='Abrüsten', command=Downgrade)
-DowngradeButton.grid(padx=5, pady=5, row=6, column=8, columnspan=1, rowspan=1)
+DowngradeButton.grid(padx=5, pady=5, row=7, column=8, columnspan=1, rowspan=1)
 # ------------------------
 
 # Schiffsstatus-----------
-Schiffsstatus = tkinter.Listbox(width=30, height=5)
-Schiffsstatus.grid(padx=5, pady=5, row=1, column=7, columnspan=2, rowspan=1)
+BeschriftungSchiffsstatus = tkinter.Label(width=20, height=1, text='<<<Status>>>')
+BeschriftungSchiffsstatus.grid(padx=5, pady=1, row=1, column=7, columnspan=2, rowspan=1)
 
+Schiffsstatus = tkinter.Listbox(width=30, height=5)
+Schiffsstatus.grid(padx=5, pady=5, row=2, column=7, columnspan=2, rowspan=1)
 NeuesSpiel()
 # ---------------------
 Fenster.mainloop()
