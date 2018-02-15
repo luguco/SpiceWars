@@ -6,17 +6,13 @@
     "database": "database"
   },
   "general": {
-    "__comment": "Cost Multiplayer for situations like bad harvest -> higher price",
+    "__comment": "Cost Multiplayer for situations like bad harvest -> higher price is added to the standart price",
     "cost_multiplier": 0.5,
-
     "__comment1": "Gamelength in weeks",
     "gamelength": 52,
-
     "startmoney": 1000,
-    "holdspace": 100,
     "startdebts": 1000,
     "maxdebts": 10000,
-
     "__comment2": "Bank interest in percent",
     "interest": 10
   },
@@ -84,6 +80,26 @@
     "Rom": {
     },
     "Barcelona": {
+    }
+  },
+  "shiplevel": {
+    "1":{
+      "pricemin": 0,
+      "pricemax": 0,
+      "holdspace": 100,
+      "shiphelper": 2
+    },
+    "2": {
+      "pricemin": 1000,
+      "pricemax": 2000,
+      "holdspace": 200,
+      "shiphelper": 5
+    },
+    "3":{
+      "pricemin": 3000,
+      "pricemax": 4000,
+      "holdspace": 300,
+      "shiphelper": 10
     }
   }
 }

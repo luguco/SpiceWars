@@ -4,6 +4,8 @@ import tkinter, random, json
 from tkinter import messagebox
 
 
+# TODO: Use Gamelength
+
 class SpiceWars(object):
     def __init__(self):
         config_file = open("config.json", "r")
@@ -11,7 +13,6 @@ class SpiceWars(object):
 
         self._money = config['general']['startmoney']
         self._debts = config['general']['startdebts']
-        self._holdspace = config['general']['holdspace']
         self._maxdebts = config['general']['maxdebts']
         self._interest = config['general']['interest']
         self._spices = []
@@ -21,6 +22,10 @@ class SpiceWars(object):
         self._owncharge = {}
         self._harbours = []
         self._error = ""
+        self._shiplevels = {}
+        self._shiplevelcount = 0
+        self._shiplevel = 1
+        self._upgradeprice = 0
 
         for spice, values in config['spices'].items():
             self._spices.append(spice)
@@ -31,6 +36,16 @@ class SpiceWars(object):
 
         for harbour in config['harbours']:
             self._harbours.append(harbour)
+
+        for shiplevel, values in config['shiplevel'].items():
+            self._shiplevels[shiplevel] = values
+            self._shiplevelcount += 1
+
+        self._holdspace = self._shiplevels["1"]["holdspace"]
+
+        self._upgradeprice = random.randint(self._shiplevels[str(self._shiplevel + 1)]["pricemin"], self._shiplevels[str(self._shiplevel + 1)]["pricemax"])
+
+    # print(self._shiplevels[str(1)]["pricemin"])
 
     @property
     def money(self):
@@ -131,6 +146,40 @@ class SpiceWars(object):
     def error(self, value):
         self._error = value
 
+    @property
+    def shiplevel(self):
+        return self._shiplevel
+
+    @shiplevel.setter
+    def shiplevel(self, value):
+        self._shiplevel = value
+
+    @property
+    def shiplevels(self):
+        return self._shiplevels
+
+    # FIXME Unused
+    @shiplevels.setter
+    def shiplevels(self, value):
+        self._shiplevels = value
+
+    @property
+    def shiplevelcount(self):
+        return self._shiplevelcount
+
+    # FIXME Unused
+    @shiplevelcount.setter
+    def shiplevelcount(self, value):
+        self._shiplevelcount = value
+
+    @property
+    def upgradeprice(self):
+        return self._upgradeprice
+
+    @upgradeprice.setter
+    def upgradeprice(self, value):
+        self._upgradeprice = value
+
 
 variables = SpiceWars()
 
@@ -149,10 +198,18 @@ def DisplayAktualisieren():
     Schiffsstatus.insert("end", "Goldtaler: " + str(variables.money))
     Schiffsstatus.insert("end", "Schulden: " + str(variables.debts))
     Schiffsstatus.insert("end", "Platz im Laderaum: " + str(variables.holdspace))
+    Schiffsstatus.insert("end", "--------------")
+    Schiffsstatus.insert("end", "Aktuelles Level: " + str(variables.shiplevel))
+    Schiffsstatus.insert("end", "Aktuelle Helferanzahl: " + str(variables.shiplevels[str(variables.shiplevel)]["shiphelper"]))
+    Schiffsstatus.insert("end", "--------------")
+    if variables.shiplevel + 1 <= variables.shiplevelcount:
+        Schiffsstatus.insert("end", "Nächstes Level: " + str(variables.shiplevel + 1))
+        Schiffsstatus.insert("end", "Upgrade Preis: " +str(variables.upgradeprice))
 
     ListeStaedte.delete("0", "end")
     for item in variables.harbours:
         ListeStaedte.insert("end", item)
+
 
 
 def NeuesSpiel():
@@ -269,6 +326,14 @@ def Weitersegeln():
     DisplayAktualisieren()
 
 
+def Upgrade():
+    return
+
+
+def Downgrade():
+    return
+
+
 # GUI ----------------------------------------
 # Hauptfenster
 Fenster = tkinter.Tk()
@@ -318,11 +383,18 @@ ButtonNeustart.grid(row=6, column=5, padx=35, pady=25, sticky=tkinter.W + tkinte
 
 ListeUpgrades = tkinter.Listbox(width=30, height=10)
 ListeUpgrades.grid(padx=5, pady=5, row=3, column=7, columnspan=2, rowspan=3)
+
+UpgradeButton = tkinter.Button(Fenster, text='Verbessern', command=Upgrade)
+UpgradeButton.grid(padx=5, pady=5, row=6, column=7, columnspan=1, rowspan=1)
+
+DowngradeButton = tkinter.Button(Fenster, text='Abrüsten', command=Downgrade)
+DowngradeButton.grid(padx=5, pady=5, row=6, column=8, columnspan=1, rowspan=1)
 # ------------------------
 
 # Schiffsstatus-----------
 Schiffsstatus = tkinter.Listbox(width=30, height=5)
 Schiffsstatus.grid(padx=5, pady=5, row=1, column=7, columnspan=2, rowspan=1)
+
 NeuesSpiel()
 # ---------------------
 Fenster.mainloop()
