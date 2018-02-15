@@ -134,6 +134,7 @@ class SpiceWars(object):
 
 variables = SpiceWars()
 
+
 def DisplayAktualisieren():
     LabelError.configure(text=variables.error)
     variables.error = ""
@@ -144,10 +145,10 @@ def DisplayAktualisieren():
         Liste.insert("end", item + " " + str(variables.currentcost[item]))
         ListeLaderaum.insert("end", str(variables.owncharge[item]) + " Einheiten: " + item)
 
-    ListeLaderaum.insert("end", "-------")
-    ListeLaderaum.insert("end", "Goldtaler: " + str(variables.money))
-    ListeLaderaum.insert("end", "Schulden: " + str(variables.debts))
-    ListeLaderaum.insert("end", "Platz im Laderaum: " + str(variables.holdspace))
+    Schiffsstatus.delete("0", "end")
+    Schiffsstatus.insert("end", "Goldtaler: " + str(variables.money))
+    Schiffsstatus.insert("end", "Schulden: " + str(variables.debts))
+    Schiffsstatus.insert("end", "Platz im Laderaum: " + str(variables.holdspace))
 
     ListeStaedte.delete("0", "end")
     for item in variables.harbours:
@@ -160,21 +161,22 @@ def NeuesSpiel():
 
 
 def kaufen():
-
-    anzahl = 0
-    nummer = 0
     try:
         anzahl = int(EingabeMenge.get())
     except:
         variables.error = 'Keine Menge eingegeben'
+        DisplayAktualisieren()
+        return
 
     try:
         nummer = int(Liste.curselection()[0])
     except:
         variables.error = 'Kein Gewürz ausgewählt'
+        DisplayAktualisieren()
+        return
 
-    if (variables.holdspace >= anzahl):
-        if(variables.money >= variables.currentcost[variables.spices[nummer]] * anzahl):
+    if variables.holdspace >= anzahl:
+        if variables.money >= variables.currentcost[variables.spices[nummer]] * anzahl:
             variables.holdspace = variables.holdspace - anzahl
             variables.money = variables.money - int(variables.currentcost[variables.spices[nummer]]) * anzahl
             variables.owncharge[variables.spices[nummer]] = variables.owncharge[variables.spices[nummer]] + anzahl
@@ -187,17 +189,19 @@ def kaufen():
 
 
 def verkaufen():
-    anzahl = 0
-    nummer = 0
     try:
         anzahl = int(EingabeMenge.get())
     except:
         variables.error = "Keine Menge eingegeben"
+        DisplayAktualisieren()
+        return
     try:
         nummer = int(ListeLaderaum.curselection()[0])
     except:
         variables.error = "Kein Gewürz ausgewählt"
-    
+        DisplayAktualisieren()
+        return
+
     if anzahl <= variables.owncharge[variables.spices[nummer]]:
         variables.holdspace = variables.holdspace + anzahl
         variables.money = variables.money + int(variables.currentcost[variables.spices[nummer]]) * anzahl
@@ -209,7 +213,6 @@ def verkaufen():
 # TODO Zufaellige Kreditverweigerung
 
 def leihen():
-    menge = 0
     try:
         menge = int(EingabeBetrag.get())
     except:
@@ -228,24 +231,26 @@ def leihen():
 
 
 def zurueckzahlen():
-    menge = 0
     try:
         menge = int(EingabeBetrag.get())
     except:
         messagebox.showinfo("- F E H L E R -", "Kein Betrag eingegeben")
         return
+    if menge > variables.debts:
+        menge = variables.debts
     zuzahlen = menge + menge * (variables.interest / 100)
     if zuzahlen > 0:
         zuzahlen += 0.4
         zuzahlen = int(round(zuzahlen))
 
     if variables.money - zuzahlen >= 0:
-        variables.money -= zuzahlen
-        variables.debts -= menge
+        variables.money -= int(zuzahlen)
+        variables.debts -= int(menge)
         EingabeBetrag.delete(0, 'end')
         DisplayAktualisieren()
     else:
         messagebox.showinfo("- F E H L E R -", "Nicht genuegend Geld")
+
 
 # ERROR: Zum gleichen Hafen segeln -> Unsinnig
 def Weitersegeln():
@@ -309,6 +314,15 @@ ButtonBewegen.grid(row=6, column=2, padx=5, pady=25, columnspan=2, sticky=tkinte
 ButtonNeustart = tkinter.Button(Fenster, text=' neues Spiel ', command=NeuesSpiel)
 ButtonNeustart.grid(row=6, column=5, padx=35, pady=25, sticky=tkinter.W + tkinter.E)
 
+# Upgrades --------------
+
+ListeUpgrades = tkinter.Listbox(width=30, height=10)
+ListeUpgrades.grid(padx=5, pady=5, row=3, column=7, columnspan=2, rowspan=3)
+# ------------------------
+
+# Schiffsstatus-----------
+Schiffsstatus = tkinter.Listbox(width=30, height=5)
+Schiffsstatus.grid(padx=5, pady=5, row=1, column=7, columnspan=2, rowspan=1)
 NeuesSpiel()
 # ---------------------
 Fenster.mainloop()
