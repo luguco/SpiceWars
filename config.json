@@ -50,6 +50,30 @@
       "pricemax": 300,
       "startprice": 10,
       "startvolume": 0
+    },
+    "Basilikum": {
+      "pricemin": 10,
+      "pricemax": 50,
+      "startprice": 20,
+      "startvolume": 0
+    },
+    "Chili": {
+      "pricemin": 50,
+      "pricemax": 200,
+      "startprice": 100,
+      "startvolume": 0
+    },
+    "Knoblauch": {
+      "pricemin": 10,
+      "pricemax": 70,
+      "startprice": 30,
+      "startvolume": 0
+    },
+    "Kuemmel": {
+      "pricemin": 60,
+      "pricemax": 400,
+      "startprice": 200,
+      "startvolume": 0
     }
   },
   "harbours": {

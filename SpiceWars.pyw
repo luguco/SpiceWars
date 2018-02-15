@@ -134,11 +134,6 @@ class SpiceWars(object):
 
 variables = SpiceWars()
 
-# print(variables.money)
-# variables.money = 100
-# print(variables.money)
-
-
 def DisplayAktualisieren():
     LabelError.configure(text=variables.error)
     variables.error = ""
@@ -164,8 +159,6 @@ def NeuesSpiel():
     DisplayAktualisieren()
 
 
-# ERROR: Keine Auswahl von Gewürzen = Error
-# FIXME: Besseres Errorhandling
 def kaufen():
 
     anzahl = 0
@@ -173,28 +166,38 @@ def kaufen():
     try:
         anzahl = int(EingabeMenge.get())
     except:
-        variables.error = 'Keine Eingabemenge'
+        variables.error = 'Keine Menge eingegeben'
 
     try:
         nummer = int(Liste.curselection()[0])
     except:
-        variables.error = 'Kein Gewürz'
+        variables.error = 'Kein Gewürz ausgewählt'
 
-    if (variables.holdspace >= anzahl) and (variables.money >= variables.currentcost[variables.spices[nummer]] * anzahl):
-        variables.holdspace = variables.holdspace - anzahl
-        variables.money = variables.money - int(variables.currentcost[variables.spices[nummer]]) * anzahl
-        variables.owncharge[variables.spices[nummer]] = variables.owncharge[variables.spices[nummer]] + anzahl
+    if (variables.holdspace >= anzahl):
+        if(variables.money >= variables.currentcost[variables.spices[nummer]] * anzahl):
+            variables.holdspace = variables.holdspace - anzahl
+            variables.money = variables.money - int(variables.currentcost[variables.spices[nummer]]) * anzahl
+            variables.owncharge[variables.spices[nummer]] = variables.owncharge[variables.spices[nummer]] + anzahl
+        else:
+            variables.error = "Nicht genuegend Geld"
+    else:
+        variables.error = "Nicht genuegend Platz"
     EingabeMenge.delete(0, 'end')
     DisplayAktualisieren()
 
 
-# ERROR Kein Errorhandling
 def verkaufen():
     anzahl = 0
     nummer = 0
-    anzahl = int(EingabeMenge.get())
-    nummer = int(ListeLaderaum.curselection()[0])
-
+    try:
+        anzahl = int(EingabeMenge.get())
+    except:
+        variables.error = "Keine Menge eingegeben"
+    try:
+        nummer = int(ListeLaderaum.curselection()[0])
+    except:
+        variables.error = "Kein Gewürz ausgewählt"
+    
     if anzahl <= variables.owncharge[variables.spices[nummer]]:
         variables.holdspace = variables.holdspace + anzahl
         variables.money = variables.money + int(variables.currentcost[variables.spices[nummer]]) * anzahl
@@ -203,32 +206,38 @@ def verkaufen():
     DisplayAktualisieren()
 
 
-# ERROR Kein Errorhandling
 # TODO Zufaellige Kreditverweigerung
 
 def leihen():
-
-    menge = int(EingabeBetrag.get())
+    menge = 0
+    try:
+        menge = int(EingabeBetrag.get())
+    except:
+        messagebox.showinfo("- F E H L E R -", "Kein Betrag eingegeben")
+        return
     if variables.debts < variables.maxdebts:
         if menge + variables.debts <= variables.maxdebts:
             variables.money += menge
             variables.debts += menge
             EingabeBetrag.delete(0, 'end')
         else:
-            messagebox.showinfo("Fehler", "Leihsumme zu gross")
+            messagebox.showinfo("- F E H L E R -", "Leihsumme zu gross")
     else:
-        messagebox.showinfo("Fehler", "Maximale Schulden erreicht")
+        messagebox.showinfo("- F E H L E R -", "Maximale Schulden erreicht")
     DisplayAktualisieren()
 
 
-# ERROR: Kein Errorhandling
 def zurueckzahlen():
-
-    menge = int(EingabeBetrag.get())
+    menge = 0
+    try:
+        menge = int(EingabeBetrag.get())
+    except:
+        messagebox.showinfo("- F E H L E R -", "Kein Betrag eingegeben")
+        return
     zuzahlen = menge + menge * (variables.interest / 100)
     if zuzahlen > 0:
-        zuzahlen += 1
-    zuzahlen = int(round(zuzahlen))
+        zuzahlen += 0.4
+        zuzahlen = int(round(zuzahlen))
 
     if variables.money - zuzahlen >= 0:
         variables.money -= zuzahlen
@@ -236,12 +245,16 @@ def zurueckzahlen():
         EingabeBetrag.delete(0, 'end')
         DisplayAktualisieren()
     else:
-        messagebox.showinfo("Fehler", "Nicht genuegend Geld")
+        messagebox.showinfo("- F E H L E R -", "Nicht genuegend Geld")
 
-
-# ERROR Kein Errorhandling
+# ERROR: Zum gleichen Hafen segeln -> Unsinnig
 def Weitersegeln():
-    nummer = int(ListeStaedte.curselection()[0])
+    nummer = 0
+    try:
+        nummer = int(ListeStaedte.curselection()[0])
+    except:
+        messagebox.showinfo("- F E H L E R -", "Keine Stadt ausgewählt")
+        return
     stadt = ListeStaedte.get(nummer)
     messagebox.showinfo("- R E I S E I N F O -",
                         "Ihre Reise geht nach " + stadt + ".\n Der Wind steht gut.\n Sie brauchen 2 Wochen")
