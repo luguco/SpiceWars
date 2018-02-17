@@ -1,213 +1,23 @@
 # -*- coding: cp1252 -*-
 
-import tkinter, random, json
+import tkinter, random, SWVariables as sw
 from tkinter import messagebox
 
 
-# TODO: Use Gamelength
-
-class SpiceWars(object):
-    def __init__(self):
-        config_file = open("config.json", "r")
-        config = json.load(config_file)
-
-        self._money = config['general']['startmoney']
-        self._debts = config['general']['startdebts']
-        self._maxdebts = config['general']['maxdebts']
-        self._interest = config['general']['interest']
-        self._cost_shiphelper = config['general']['cost_shiphelper']
-        self._spices = []
-        self._currentcost = {}
-        self._mincost = {}
-        self._maxcost = {}
-        self._owncharge = {}
-        self._harbours = []
-        self._error = ""
-        self._shiplevels = {}
-        self._shiplevelcount = 0
-        self._shiplevel = 1
-        self._upgradeprice = 0
-        self._shiphelper = 0
-        self._actualhabour = ""
-
-        for spice, values in config['spices'].items():
-            self._spices.append(spice)
-            self._mincost[spice] = values['pricemin']
-            self._maxcost[spice] = values['pricemax']
-            self._owncharge[spice] = values['startvolume']
-            self._currentcost[spice] = values['startprice']
-
-        for harbour in config['harbours']:
-            self._harbours.append(harbour)
-
-        for shiplevel, values in config['shiplevel'].items():
-            self._shiplevels[shiplevel] = values
-            self._shiplevelcount += 1
-
-        self._holdspace = self._shiplevels["1"]["holdspace"]
-
-        self._upgradeprice = random.randint(self._shiplevels[str(self._shiplevel + 1)]["pricemin"],
-                                            self._shiplevels[str(self._shiplevel + 1)]["pricemax"])
-
-    # print(self._shiplevels[str(1)]["pricemin"])
-
-    @property
-    def money(self):
-        return self._money
-
-    @money.setter
-    def money(self, value):
-        self._money = value
-
-    @property
-    def debts(self):
-        return self._debts
-
-    @debts.setter
-    def debts(self, value):
-        self._debts = value
-
-    @property
-    def holdspace(self):
-        return self._holdspace
-
-    @holdspace.setter
-    def holdspace(self, value):
-        self._holdspace = value
-
-    @property
-    def maxdebts(self):
-        return self._maxdebts
-
-    # FIXME: Unused
-    @maxdebts.setter
-    def maxdebts(self, value):
-        self._maxdebts = value
-
-    @property
-    def interest(self):
-        return self._interest
-
-    # FIXME: Unused
-    @interest.setter
-    def interest(self, value):
-        self._interest = value
-
-    @property
-    def spices(self):
-        return self._spices
-
-    @spices.setter
-    def spices(self, value):
-        self._spices = value
-
-    @property
-    def currentcost(self):
-        return self._currentcost
-
-    @currentcost.setter
-    def currentcost(self, value):
-        self._currentcost = value
-
-    @property
-    def mincost(self):
-        return self._mincost
-
-    @mincost.setter
-    def mincost(self, value):
-        self._mincost = value
-
-    @property
-    def maxcost(self):
-        return self._maxcost
-
-    @maxcost.setter
-    def maxcost(self, value):
-        self._maxcost = value
-
-    @property
-    def owncharge(self):
-        return self._owncharge
-
-    @owncharge.setter
-    def owncharge(self, value):
-        self._owncharge = value
-
-    @property
-    def harbours(self):
-        return self._harbours
-
-    # FIXME: Unused
-    @harbours.setter
-    def harbours(self, value):
-        self._harbours = value
-
-    @property
-    def error(self):
-        return self._error
-
-    @error.setter
-    def error(self, value):
-        self._error = value
-
-    @property
-    def shiplevel(self):
-        return self._shiplevel
-
-    @shiplevel.setter
-    def shiplevel(self, value):
-        self._shiplevel = value
-
-    @property
-    def shiplevels(self):
-        return self._shiplevels
-
-    # FIXME Unused
-    @shiplevels.setter
-    def shiplevels(self, value):
-        self._shiplevels = value
-
-    @property
-    def shiplevelcount(self):
-        return self._shiplevelcount
-
-    # FIXME Unused
-    @shiplevelcount.setter
-    def shiplevelcount(self, value):
-        self._shiplevelcount = value
-
-    @property
-    def upgradeprice(self):
-        return self._upgradeprice
-
-    @upgradeprice.setter
-    def upgradeprice(self, value):
-        self._upgradeprice = value
-
-    @property
-    def shiphelper(self):
-        return self._shiphelper
-
-    @shiphelper.setter
-    def shiphelper(self, value):
-        self._shiphelper = value
-
-    @property
-    def cost_shiphelper(self):
-        return self._cost_shiphelper
-
-    @cost_shiphelper.setter
-    def cost_shiphelper(self, value):
-        self._cost_shiphelper = value
-
-
-variables = SpiceWars()
+variables = sw.SpiceWars()
 
 
 def DisplayAktualisieren():
+    if variables.remainlength <= 0:
+        messagebox.showinfo("- I N F O -",
+                            "Herzlichen Glückwunsch!\nDas Spiel ist beendet!\n\nDu hast folgendes erreicht:\nGeld: " + str(
+                                variables.money) + "\nSchulden: " + str(variables.debts) + "\nLevel: " + str(
+                                variables.shiplevel) + "\nHelfer: " + str(variables.shiphelper))
+
     LabelError.configure(text=variables.error)
     variables.error = ""
-
+    LabelZeit.configure(text="Spielzeit: " + str(int(variables.currentlength)) + " Tage")
+    LabelRestzeit.configure(text="Restzeit: " + str(int(variables.remainlength)) + " Tage")
     Liste.delete("0", "end")
     ListeLaderaum.delete("0", "end")
     for item in variables.spices:
@@ -261,7 +71,18 @@ def kaufen():
         if variables.money >= variables.currentcost[variables.spices[nummer]] * anzahl:
             variables.holdspace = variables.holdspace - anzahl
             variables.money = variables.money - int(variables.currentcost[variables.spices[nummer]]) * anzahl
-            variables.owncharge[variables.spices[nummer]] = variables.owncharge[variables.spices[nummer]] + anzahl
+            working = True
+            while working:
+                if anzahl > variables.shiphelper + 1:
+                    add = variables.shiphelper + 1
+                    anzahl -= add
+                else:
+                    add = anzahl
+                    anzahl -= add
+                    working = False
+                variables.remainlength -= 0.2
+                variables.currentlength += 0.2
+                variables.owncharge[variables.spices[nummer]] = variables.owncharge[variables.spices[nummer]] + add
         else:
             variables.error = "Nicht genuegend Geld"
     else:
@@ -287,7 +108,18 @@ def verkaufen():
     if anzahl <= variables.owncharge[variables.spices[nummer]]:
         variables.holdspace = variables.holdspace + anzahl
         variables.money = variables.money + int(variables.currentcost[variables.spices[nummer]]) * anzahl
-        variables.owncharge[variables.spices[nummer]] = variables.owncharge[variables.spices[nummer]] - anzahl
+        working = True
+        while working:
+            if anzahl > variables.shiphelper + 1:
+                remove = variables.shiphelper + 1
+                anzahl -= remove
+            else:
+                remove = anzahl
+                anzahl -= remove
+                working = False
+            variables.remainlength -= 0.2
+            variables.currentlength += 0.2
+            variables.owncharge[variables.spices[nummer]] = variables.owncharge[variables.spices[nummer]] - remove
     EingabeMenge.delete(0, 'end')
     DisplayAktualisieren()
 
@@ -346,6 +178,14 @@ def Weitersegeln():
     messagebox.showinfo("- R E I S E I N F O -",
                         "Ihre Reise geht nach " + stadt + ".\n Der Wind steht gut.\n Sie brauchen 2 Wochen")
 
+    variables.remainlength -= 14
+    variables.currentlength += 14
+    for helper in range(0, variables.shiphelper):
+        if variables.money >= 200:
+            variables.money -= 200
+        else:
+            variables.shiphelper -= 1
+            messagebox.showinfo("- I N F O -", "Ein Helfer hat gekündigt, nachdem du ihn\nnicht mehr bezahlen konntest")
     for spice in variables.spices:
         variables.currentcost[spice] = random.randint(variables.mincost[spice], variables.maxcost[spice])
 
@@ -386,6 +226,7 @@ def Upgrade():
             messagebox.showinfo("- F E H L E R -", "Maximale Helferanzahl erreicht")
     DisplayAktualisieren()
 
+
 def Downgrade():
     try:
         nummer = int(ListeUpgrades.curselection()[0])
@@ -397,8 +238,8 @@ def Downgrade():
             variables.shiplevel -= 1
             variables.holdspace = variables.shiplevels[str(variables.shiplevel)]['holdspace']
             variables.money += int((random.randint(
-                    variables.shiplevels[str(variables.shiplevel + 1)]["pricemin"],
-                    variables.shiplevels[str(variables.shiplevel + 1)]["pricemax"]) / 30))
+                variables.shiplevels[str(variables.shiplevel + 1)]["pricemin"],
+                variables.shiplevels[str(variables.shiplevel + 1)]["pricemax"]) / 30))
 
             variables.upgradeprice = random.randint(
                 variables.shiplevels[str(variables.shiplevel + 1)]["pricemin"],
@@ -411,6 +252,7 @@ def Downgrade():
         else:
             messagebox.showinfo("- F E H L E R -", "Du hast keine Helfer")
     DisplayAktualisieren()
+
 
 # GUI ----------------------------------------
 # Hauptfenster
