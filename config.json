@@ -14,7 +14,8 @@
     "startdebts": 1000,
     "maxdebts": 10000,
     "__comment2": "Bank interest in percent",
-    "interest": 10
+    "interest": 10,
+    "cost_shiphelper": 200
   },
   "spices": {
     "Pfeffer": {
