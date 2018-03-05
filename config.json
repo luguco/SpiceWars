@@ -6,7 +6,8 @@
     "database": "database"
   },
   "general": {
-	"event_probability": 0.2,
+    "__comment": "Event_probability for each event individually; Every event has the same chance",
+	"event_probability": 0.1,
     "__comment1": "Gamelength in weeks",
     "gamelength": 52,
     "startmoney": 1000,
@@ -106,6 +107,8 @@
 	"1": {
 	  "eventname": "Gute Ernte",
 	  "cost_multiplier": 0.9,
+	  "cost_shiphelper_mulitplier": 1.0,
+	  "cost_shipupgrade_multiplier": 1.0,
 	  "attack_probability": 0,
 	  "stolen_money": 0,
 	  "stolen_helper": 0,
@@ -116,6 +119,8 @@
 	"2": {
 	  "eventname": "Schlechte Ernte",
 	  "cost_multiplier": 1.1,
+	  "cost_shiphelper_mulitplier": 1.0,
+	  "cost_shipupgrade_multiplier": 1.0,
 	  "attack_probability": 0,
 	  "stolen_money": 0,
 	  "stolen_helper": 0,
@@ -126,6 +131,8 @@
 	"3": {
 	  "eventname": "Sehr gute Ernte",
 	  "cost_multiplier": 0.8,
+	  "cost_shiphelper_mulitplier": 1.0,
+	  "cost_shipupgrade_multiplier": 1.0,
 	  "attack_probability": 0,
 	  "stolen_money": 0,
 	  "stolen_helper": 0,
@@ -136,6 +143,8 @@
 	"4": {
 	  "eventname": "Sehr schlechte Ernte",
 	  "cost_multiplier": 1.2,
+	  "cost_shiphelper_mulitplier": 1.0,
+	  "cost_shipupgrade_multiplier": 1.0,
 	  "attack_probability": 0,
 	  "stolen_money": 0,
 	  "stolen_helper": 0,

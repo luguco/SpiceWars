@@ -3,7 +3,7 @@
 import tkinter, random, SWVariables as sw
 from tkinter import messagebox
 
-
+# Initierung der Variablen-Klasse
 variables = sw.SpiceWars()
 
 
@@ -67,7 +67,9 @@ def kaufen():
         variables.error = 'Kein Gewürz ausgewählt'
         DisplayAktualisieren()
         return
-
+    if anzahl < 1:
+        messagebox.showinfo("- F E H L E R -", "Zu geringe Menge")
+        return
     if variables.holdspace >= anzahl:
         if variables.money >= variables.currentcost[variables.spices[nummer]] * anzahl:
             variables.holdspace = variables.holdspace - anzahl
@@ -106,6 +108,10 @@ def verkaufen():
         DisplayAktualisieren()
         return
 
+    if anzahl < 1:
+        messagebox.showinfo("- F E H L E R -", "Zu geringe Menge")
+        return
+
     if anzahl <= variables.owncharge[variables.spices[nummer]]:
         variables.holdspace = variables.holdspace + anzahl
         variables.money = variables.money + int(variables.currentcost[variables.spices[nummer]]) * anzahl
@@ -133,6 +139,10 @@ def leihen():
     except:
         messagebox.showinfo("- F E H L E R -", "Kein Betrag eingegeben")
         return
+
+    if menge < 1:
+        messagebox.showinfo("- F E H L E R -", "Zu geringer Betrag")
+        return
     if variables.debts < variables.maxdebts:
         if menge + variables.debts <= variables.maxdebts:
             variables.money += menge
@@ -150,6 +160,10 @@ def zurueckzahlen():
         menge = int(EingabeBetrag.get())
     except:
         messagebox.showinfo("- F E H L E R -", "Kein Betrag eingegeben")
+        return
+
+    if menge < 1:
+        messagebox.showinfo("- F E H L E R -", "Zu geringer Betrag")
         return
     if menge > variables.debts:
         menge = variables.debts
@@ -177,25 +191,9 @@ def Weitersegeln():
     if variables.actualhabour == stadt:
         messagebox.showinfo("- F E H L E R -", "Du bist bereits in diesem Hafen")
         return
-    EventManager()
+
     variables.actualhabour = stadt
-    messagebox.showinfo("- R E I S E I N F O -",
-                        "Ihre Reise geht nach " + stadt + ".\n Der Wind steht gut.\n Sie brauchen 2 Wochen")
-
-    variables.remainlength -= 14
-    variables.currentlength += 14
-    for helper in range(0, variables.shiphelper):
-        if variables.money >= 200:
-            variables.money -= 200
-        else:
-            variables.shiphelper -= 1
-            messagebox.showinfo("- I N F O -", "Ein Helfer hat gekündigt, nachdem du ihn\nnicht mehr bezahlen konntest")
-    for spice in variables.spices:
-        variables.currentcost[spice] = random.randint(variables.mincost[spice], variables.maxcost[spice])
-
-    if variables.shiplevel + 1 <= variables.shiplevelcount:
-        variables.upgradeprice = random.randint(variables.shiplevels[str(variables.shiplevel + 1)]["pricemin"],
-                                                variables.shiplevels[str(variables.shiplevel + 1)]["pricemax"])
+    EventManager()
     DisplayAktualisieren()
 
 
@@ -257,16 +255,84 @@ def Downgrade():
             messagebox.showinfo("- F E H L E R -", "Du hast keine Helfer")
     DisplayAktualisieren()
 
+
 def EventManager():
+    # Neuen Gewürzepreis festlegen
+    for spice in variables.spices:
+        variables.currentcost[spice] = random.randint(variables.mincost[spice], variables.maxcost[spice])
+    # Neuen Schiffslevelpreis Festlegen
+    if variables.shiplevel + 1 <= variables.shiplevelcount:
+        variables.upgradeprice = random.randint(variables.shiplevels[str(variables.shiplevel + 1)]["pricemin"],
+                                                variables.shiplevels[str(variables.shiplevel + 1)]["pricemax"])
 
     keys = list(variables.events.keys())
     random.shuffle(keys)
-    for event in variables.events:
-        rand = random.randint(1, 10)
-        if rand <= 10 * variables.event_probability:
-            print(str(rand) + "true")
+    for eventnr in keys:
+
+        rand = random.randint(1, 100)
+        if rand <= 100 * variables.event_probability:
+            event = variables.events[eventnr]
+            labeltext = "<<<Events>>>"
+            labeltext = labeltext + "\n" + event['eventname']
+
+            messagebox.showinfo("- R E I S E I N F O -",
+                                "Ihre Reise geht nach " + variables.actualhabour + "\nDas Event '" + event[
+                                    'eventname'] + "' findet statt")
+
+            for spice in variables.spices:
+                variables.currentcost[spice] = int(variables.currentcost[spice] * event['cost_multiplier'])
+
+            for helper in range(0, variables.shiphelper):
+                if variables.money >= 200 * event['cost_shiphelper_mulitplier']:
+                    variables.money -= 200 * event['cost_shiphelper_mulitplier']
+                else:
+                    variables.shiphelper -= 1
+                    messagebox.showinfo("- I N F O -",
+                                        "Ein Helfer hat gekündigt, nachdem du ihn\nnicht mehr bezahlen konntest")
+
+            if variables.shiplevel + 1 <= variables.shiplevelcount:
+                variables.upgradeprice = int(variables.upgradeprice * event['cost_shipupgrade_multiplier'])
+
+            rand = random.randint(1, 100)
+            if rand <= 100 * event['attack_probability']:
+                labeltext = labeltext + "\nGestohlenes Geld: " + str(int(variables.money * event['stolen_money']))
+                variables.money -= int(variables.money * event['stolen_money'])
+
+                labeltext = labeltext + "\nGestohlene Helfer: " + str(
+                    int(variables.shiphelper * event['stolen_helper']))
+                variables.shiphelper -= int(variables.shiphelper * event['stolen_helper'])
+
+                labeltext = labeltext + "\nTote Helfer: " + str(int(variables.shiphelper * event['dead_helper']))
+                variables.shiphelper -= int(variables.shiphelper * event['dead_helper'])
+
+            UeberschriftEvents.configure(text=labeltext)
+            rand = random.randint(1, 100)
+
+            variables.remainlength -= int(14 * event['travelspeed_multiplier'])
+            variables.currentlength += int(14 * event['travelspeed_multiplier'])
+
+            if rand <= 100 * event['you_are_dead']:
+                messagebox.showinfo("- E V E N T -", "Du bist tod")
+                variables.remainlength = 0
+
+            return
+
+    UeberschriftEvents.configure(text="<<<Events>>>")
+    messagebox.showinfo("- R E I S E I N F O -",
+                        "Ihre Reise geht nach " + variables.actualhabour)
+    # Reisezeit berechnen
+    variables.remainlength -= 14
+    variables.currentlength += 14
+    # Schiffshelfer bezahlen
+    for helper in range(0, variables.shiphelper):
+        if variables.money >= 200:
+            variables.money -= 200
         else:
-            print(str(rand) + "false")
+            variables.shiphelper -= 1
+            messagebox.showinfo("- I N F O -",
+                                "Ein Helfer hat gekündigt, nachdem du ihn\nnicht mehr bezahlen konntest")
+
+
 # GUI ----------------------------------------
 # Hauptfenster
 Fenster = tkinter.Tk()
