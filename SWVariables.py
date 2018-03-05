@@ -12,6 +12,7 @@ class SpiceWars(object):
         self._interest = config['general']['interest']
         self._cost_shiphelper = config['general']['cost_shiphelper']
         self._remainlength = config['general']['gamelength'] * 7
+        self._event_probability = config['general']['event_probability']
         self._currentlength = 0
         self._spices = []
         self._currentcost = {}
@@ -25,7 +26,8 @@ class SpiceWars(object):
         self._shiplevel = 1
         self._upgradeprice = 0
         self._shiphelper = 0
-        self._actualhabour = ""
+        self._actualhabour = "Heimhafen"
+        self._events = {}
 
         for spice, values in config['spices'].items():
             self._spices.append(spice)
@@ -40,13 +42,16 @@ class SpiceWars(object):
         for shiplevel, values in config['shiplevel'].items():
             self._shiplevels[shiplevel] = values
             self._shiplevelcount += 1
-
+            
+        for event, values in config['events'].items():
+            self._events[event] = values
+            
         self._holdspace = self._shiplevels["1"]["holdspace"]
 
         self._upgradeprice = random.randint(self._shiplevels[str(self._shiplevel + 1)]["pricemin"],
                                             self._shiplevels[str(self._shiplevel + 1)]["pricemax"])
 
-    # print(self._shiplevels[str(1)]["pricemin"])
+        #print(self._events)
 
     @property
     def money(self):
@@ -212,3 +217,19 @@ class SpiceWars(object):
     @currentlength.setter
     def currentlength(self, value):
         self._currentlength = value
+
+    @property
+    def actualhabour(self):
+        return self._actualhabour
+
+    @actualhabour.setter
+    def actualhabour(self, value):
+        self._actualhabour = value
+
+    @property
+    def events(self):
+        return self._events
+
+    @property
+    def event_probability(self):
+        return self._event_probability

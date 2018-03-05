@@ -6,8 +6,7 @@
     "database": "database"
   },
   "general": {
-    "__comment": "Cost Multiplayer for situations like bad harvest -> higher price is added to the standart price",
-    "cost_multiplier": 0.5,
+	"event_probability": 0.2,
     "__comment1": "Gamelength in weeks",
     "gamelength": 52,
     "startmoney": 1000,
@@ -39,7 +38,7 @@
     "Vanille": {
       "pricemin": 100,
       "pricemax": 450,
-      "startprice": 20,
+      "startprice": 200,
       "startvolume": 0
     },
     "Zimt": {
@@ -102,5 +101,131 @@
       "holdspace": 300,
       "shiphelper": 10
     }
+  },
+  "events": {
+	"1": {
+	  "eventname": "Gute Ernte",
+	  "cost_multiplier": 0.9,
+	  "attack_probability": 0,
+	  "stolen_money": 0,
+	  "stolen_helper": 0,
+	  "dead_helper": 0,
+	  "you_are_dead": 0.0,
+	  "travelspeed_multiplier": 1.0
+	},
+	"2": {
+	  "eventname": "Schlechte Ernte",
+	  "cost_multiplier": 1.1,
+	  "attack_probability": 0,
+	  "stolen_money": 0,
+	  "stolen_helper": 0,
+	  "dead_helper": 0,
+	  "you_are_dead": 0.0,
+	  "travelspeed_multiplier": 1.0
+	},
+	"3": {
+	  "eventname": "Sehr gute Ernte",
+	  "cost_multiplier": 0.8,
+	  "attack_probability": 0,
+	  "stolen_money": 0,
+	  "stolen_helper": 0,
+	  "dead_helper": 0,
+	  "you_are_dead": 0.0,
+	  "travelspeed_multiplier": 1.0
+	},
+	"4": {
+	  "eventname": "Sehr schlechte Ernte",
+	  "cost_multiplier": 1.2,
+	  "attack_probability": 0,
+	  "stolen_money": 0,
+	  "stolen_helper": 0,
+	  "dead_helper": 0,
+	  "you_are_dead": 0.0,
+	  "travelspeed_multiplier": 1.0
+	},
+	"5": {
+	  "eventname": "Arbeitermangel",
+	  "cost_multiplier": 1.0,
+	  "cost_shiphelper_mulitplier": 1.5,
+	  "cost_shipupgrade_multiplier": 1.0,
+	  "attack_probability": 0,
+	  "stolen_money": 0,
+	  "stolen_helper": 0,
+	  "dead_helper": 0,
+	  "you_are_dead": 0.0,
+	  "travelspeed_multiplier": 1.0
+	},
+	"6": {
+	  "eventname": "Guter Wind",
+	  "cost_multiplier": 1.0,
+	  "cost_shiphelper_mulitplier": 1.0,
+	  "cost_shipupgrade_multiplier": 1.0,
+	  "attack_probability": 0,
+	  "stolen_money": 0,
+	  "stolen_helper": 0,
+	  "dead_helper": 0,
+	  "you_are_dead": 0.0,
+	  "travelspeed_multiplier": 0.9
+	},
+	"7": {
+	  "eventname": "Schlechter Wind",
+	  "cost_multiplier": 1.0,
+	  "cost_shiphelper_mulitplier": 1.0,
+	  "cost_shipupgrade_multiplier": 1.0,
+	  "attack_probability": 0,
+	  "stolen_money": 0,
+	  "stolen_helper": 0,
+	  "dead_helper": 0,
+	  "you_are_dead": 0.0,
+	  "travelspeed_multiplier": 1.1
+	},
+	"8": {
+	  "eventname": "Sturm",
+	  "cost_multiplier": 1.0,
+	  "cost_shiphelper_mulitplier": 1.1,
+	  "cost_shipupgrade_multiplier": 1.1,
+	  "attack_probability": 0,
+	  "stolen_money": 0,
+	  "stolen_helper": 0,
+	  "dead_helper": 0.1,
+	  "you_are_dead": 0.0,
+	  "travelspeed_multiplier": 0.8
+	},
+	"9": {
+	  "eventname": "Windstille",
+	  "cost_multiplier": 1.0,
+	  "cost_shiphelper_mulitplier": 1.1,
+	  "cost_shipupgrade_multiplier": 1.1,
+	  "attack_probability": 0.1,
+	  "stolen_money": 0.1,
+	  "stolen_helper": 0.1,
+	  "dead_helper": 0.1,
+	  "you_are_dead": 0.01,
+	  "travelspeed_multiplier": 1.2
+	},
+	"10": {
+	  "eventname": "Kleiner Piratenangriff",
+	  "cost_multiplier": 1.0,
+	  "cost_shiphelper_mulitplier": 1.0,
+	  "cost_shipupgrade_multiplier": 1.0,
+	  "attack_probability": 1,
+	  "stolen_money": 0.1,
+	  "stolen_helper": 0.1,
+	  "dead_helper": 0.1,
+	  "you_are_dead": 0.01,
+	  "travelspeed_multiplier": 1.1
+	},
+	"11": {
+	  "eventname": "Grosser Piratenangriff",
+	  "cost_multiplier": 1.0,
+	  "cost_shiphelper_mulitplier": 1.0,
+	  "cost_shipupgrade_multiplier": 1.0,
+	  "attack_probability": 1,
+	  "stolen_money": 0.3,
+	  "stolen_helper": 0.1,
+	  "dead_helper": 0.3,
+	  "you_are_dead": 0.05,
+	  "travelspeed_multiplier": 1.2
+	}
   }
 }

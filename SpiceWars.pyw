@@ -28,6 +28,7 @@ def DisplayAktualisieren():
     Schiffsstatus.insert("end", "Goldtaler: " + str(variables.money))
     Schiffsstatus.insert("end", "Schulden: " + str(variables.debts))
     Schiffsstatus.insert("end", "Platz im Laderaum: " + str(variables.holdspace))
+    Schiffsstatus.insert("end", "Hafen: " + str(variables.actualhabour))
     Schiffsstatus.insert("end", "--------------")
     Schiffsstatus.insert("end", "Aktuelles Level: " + str(variables.shiplevel))
     Schiffsstatus.insert("end", "Aktuelle Helferanzahl: " + str(variables.shiphelper))
@@ -166,8 +167,6 @@ def zurueckzahlen():
         messagebox.showinfo("- F E H L E R -", "Nicht genuegend Geld")
 
 
-# ERROR: Zum gleichen Hafen segeln -> Unsinnig
-# TODO: Helfer auszahlen
 def Weitersegeln():
     try:
         nummer = int(ListeStaedte.curselection()[0])
@@ -175,6 +174,11 @@ def Weitersegeln():
         messagebox.showinfo("- F E H L E R -", "Keine Stadt ausgewählt")
         return
     stadt = ListeStaedte.get(nummer)
+    if variables.actualhabour == stadt:
+        messagebox.showinfo("- F E H L E R -", "Du bist bereits in diesem Hafen")
+        return
+    EventManager()
+    variables.actualhabour = stadt
     messagebox.showinfo("- R E I S E I N F O -",
                         "Ihre Reise geht nach " + stadt + ".\n Der Wind steht gut.\n Sie brauchen 2 Wochen")
 
@@ -253,7 +257,16 @@ def Downgrade():
             messagebox.showinfo("- F E H L E R -", "Du hast keine Helfer")
     DisplayAktualisieren()
 
+def EventManager():
 
+    keys = list(variables.events.keys())
+    random.shuffle(keys)
+    for event in variables.events:
+        rand = random.randint(1, 10)
+        if rand <= 10 * variables.event_probability:
+            print(str(rand) + "true")
+        else:
+            print(str(rand) + "false")
 # GUI ----------------------------------------
 # Hauptfenster
 Fenster = tkinter.Tk()
