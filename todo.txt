@@ -1,11 +1,11 @@
 TODO Multiplayermodus mit MYSQL
-TODO Upgraden von Schiffgröße/ Reisegeschwindigkeit?
-TODO Zufällige Reisegeschwindigkeit - Geokoordinaten?
+TO/DO Upgraden von Schiffgröße/ Reisegeschwindigkeit?
+TOD/O Zufällige Reisegeschwindigkeit - Geokoordinaten?
 TODO Hafen voll
 TODO Heimliegeplatz - kein Verkaufen nur Up/Downgraden, Bank, Helfer anwerben
-TODO Bank mit Schulden und Krediten/Schufa abfrage? :)
-TODO Überfälle - Chance zu gewinnenc
+TOD/O Bank mit Schulden und Krediten/Schufa abfrage? :)
+TOD/O Überfälle - Chance zu gewinnenc
 TODO Waren endlich
-TODO Verschiedene Reiseinfos
+TOD/O Verschiedene Reiseinfos
 *FIXM/E
 *ERRO/R

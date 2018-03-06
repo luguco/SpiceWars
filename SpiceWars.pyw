@@ -208,6 +208,7 @@ def Upgrade():
             if variables.money >= variables.upgradeprice:
                 variables.shiplevel += 1
                 variables.holdspace = variables.shiplevels[str(variables.shiplevel)]['holdspace']
+                variables.money -= variables.upgradeprice
 
                 if variables.shiplevel + 1 <= variables.shiplevelcount:
                     variables.upgradeprice = random.randint(
